@@ -5,14 +5,6 @@
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(x[0]))
 
-#define PI 3.141592654f
-#define PI_2 (2.f * PI)
-#define RAD_TO_DEG(rad) (180.f/PI) * rad
-#define DEG_TO_RAD(deg) (PI/180.f) * deg
-
-#define MIN(a,b) (((a)<(b))?(a):(b))
-#define MAX(a,b) (((a)>(b))?(a):(b))
-
 inline const char* file_extension(const char* filename) {
     const char* dot = strrchr(filename, '.');
     if (!dot || dot == filename)
