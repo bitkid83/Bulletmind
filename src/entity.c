@@ -348,11 +348,11 @@ void ent_set_bbox(entity_t* e, const rect_t* bbox) {
     e->org.y -= (float)bbox_half_size.y;
 }
 
-void ent_set_mouse_org(entity_t* e, vec2f_t m_org) {
+void ent_set_mouse_org(entity_t* e, const vec2f_t m_org) {
     vec2f_copy(&e->mouse_org, m_org);
 }
 
-void ent_euler_move(entity_t* e, vec2f_t accel, float friction, double dt) {
+void ent_euler_move(entity_t* e, const vec2f_t accel, const float friction, const double dt) {
     vec2f_t delta = { 0.f, 0.f };
     vec2f_t accel_scaled = { 0.f, 0.f };
 
@@ -478,13 +478,13 @@ void ent_move_satellite(entity_t* satellite, entity_t* player, engine_t* engine,
 
 void ent_move_bullet(entity_t* bullet, engine_t* engine, double dt) {
     static vec2f_t dist = { 0.f, 0.f };
-    if (bullet->vel.x == 0.0 && bullet->vel.y == 0.0) {
-        // vector between entity mouse origin and entity origin
+    // vector between entity mouse origin and entity origin
+    if (bullet->vel.x == 0.f && bullet->vel.y == 0.f) {
         vec2f_sub(&dist, bullet->mouse_org, bullet->org);
         vec2f_norm(&dist, dist);
         vec2f_mulf(&dist, dist, 2500.f);
-        // reflection: r = d-2(d*n)n where d*nd*n is the dot product, and nn must be normalized.
     }
+    // reflection: r = d-2(d*n)n where d*nd*n is the dot product, and nn must be normalized.
     ent_euler_move(bullet, dist, 0.0, dt);
     ent_bbox_update(bullet);
 }
