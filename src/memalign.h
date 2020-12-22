@@ -2,6 +2,7 @@
 #define _H_MEMALIGN
 
 #include "c99defs.h"
+#include "types.h"
 
 bool is_power_of_two(uintptr_t x);
 uintptr_t align_forward(uintptr_t ptr, size_t align);

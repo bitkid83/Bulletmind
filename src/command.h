@@ -2,13 +2,14 @@
 #define _H_COMMAND
 
 #include "c99defs.h"
+#include "types.h"
 #include "engine.h"
 
-uint32_t *array_cmds; // this doesn't need to be a pointer
+u32 *array_cmds; // this doesn't need to be a pointer
 
 void cmd_init(void);
-bool cmd_getstate(uint32_t cmd);
-void cmd_toggle_bool(uint32_t cmd, bool* value);
+bool cmd_getstate(u32 cmd);
+void cmd_toggle_bool(u32 cmd, bool* value);
 void cmd_refresh(engine_t* engine);
 void cmd_shutdown(void);
 
@@ -32,7 +33,7 @@ enum {
 #undef CMD
 
 #define CMD(c1, c2, c3) c1,
-static const uint32_t COMMAND_LIST[] = {
+static const u32 COMMAND_LIST[] = {
     COMMAND_VALS
 };
 #undef CMD
@@ -43,6 +44,6 @@ static const char *COMMAND_NAMES[] = {
 };
 #undef CMD
 
-static volatile const uint32_t COMMAND_COUNT = sizeof(COMMAND_LIST);
+static volatile const u32 COMMAND_COUNT = sizeof(COMMAND_LIST);
 
 #endif

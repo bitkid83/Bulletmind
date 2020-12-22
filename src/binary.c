@@ -1,6 +1,6 @@
 #include "binary.h"
 
-bool bin_stream_init(stream_t** stream, uint8_t* data, const size_t size) {
+bool bin_stream_init(stream_t** stream, u8* data, const size_t size) {
     *stream = NULL;
     *stream = (stream_t*)malloc(sizeof(stream_t));
     if (*stream == NULL) {
@@ -21,7 +21,7 @@ void bin_stream_shutdown(stream_t* stream) {
         free((void*)stream);
 }
 
-bool bin_stream_seek(stream_t* stream, const seek_origin_t origin, const int32_t offset) {
+bool bin_stream_seek(stream_t* stream, const seek_origin_t origin, const i32 offset) {
     if (!stream)
         return false;
 
@@ -32,7 +32,7 @@ bool bin_stream_seek(stream_t* stream, const seek_origin_t origin, const int32_t
             return false;
     }
     else if (origin == SEEK_ORIGIN_CURRENT) {
-        const size_t new_pos = (size_t)((int32_t)stream->position + offset);
+        const size_t new_pos = (size_t)((i32)stream->position + offset);
         if (new_pos <= stream->size && new_pos >= 0)
             stream->position = new_pos;
         else
@@ -49,13 +49,13 @@ bool bin_stream_seek(stream_t* stream, const seek_origin_t origin, const int32_t
     return true;
 }
 
-bool bin_stream_write(stream_t* stream, uint8_t* data, const size_t size, size_t* bytes_written) {
+bool bin_stream_write(stream_t* stream, u8* data, const size_t size, size_t* bytes_written) {
     if (!stream)
         return false;
     if (size > stream->size)
         return false;
 
-    uint8_t* data_ptr = &stream->data[stream->position];
+    u8* data_ptr = &stream->data[stream->position];
     if (!data_ptr)
         return false;
 

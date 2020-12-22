@@ -3,22 +3,22 @@
 #include "sprite.h"
 #include "vector.h"
 
-void draw_rect_solid(SDL_Renderer* rend, int32_t x, int32_t y, int32_t w, int32_t h, rgba_t rgba)
+void draw_rect_solid(SDL_Renderer* rend, i32 x, i32 y, i32 w, i32 h, rgba_t rgba)
 {
     rect_t rect = { x, y, w, h };
     SDL_SetRenderDrawColor(rend, rgba.r, rgba.g, rgba.b, rgba.a);
     SDL_RenderFillRect(rend, (const SDL_Rect *)&rect);
 }
 
-void draw_sprite_sheet(SDL_Renderer* rend, sprite_sheet_t* sprite_sheet, rect_t* bbox, const double scale, const float angle, const bool flip) {
-    static int32_t frame_num = 0;    
-    static double frame_time = 0.0;
+void draw_sprite_sheet(SDL_Renderer* rend, sprite_sheet_t* sprite_sheet, rect_t* bbox, const f64 scale, const f32 angle, const bool flip) {
+    static i32 frame_num = 0;    
+    static f64 frame_time = 0.0;
 
     sprite_t* backing_sprite = sprite_sheet->backing_sprite;
 
     ss_frame_t* current_frame = &sprite_sheet->frames[frame_num];
-    // const float frame_delay = current_frame->duration * scale;
-    double frame_delay = 0.0;
+    // const f32 frame_delay = current_frame->duration * scale;
+    f64 frame_delay = 0.0;
     if (scale > 0.0 && !isnan(scale) && !isinf(scale))
         frame_delay = 1.0/(scale);
     else

@@ -14,13 +14,13 @@
 
 engine_t* engine = NULL;
 
-static double engine_start_time;
+static f64 engine_start_time;
 
 void eng_init_timing(void) {
     engine_start_time = perf_seconds();
 }
 
-double eng_get_time(void) {
+f64 eng_get_time(void) {
     return perf_seconds() - engine_start_time;
 }
 
@@ -36,15 +36,15 @@ game_resource_t* eng_get_resource(engine_t* eng, const char* name) {
     return rsrc;
 }
 
-bool eng_init(const char* name, int32_t version, engine_t* eng) {
-    double init_start = perf_seconds();
+bool eng_init(const char* name, i32 version, engine_t* eng) {
+    f64 init_start = perf_seconds();
 
     eng->frame_count = 0;
 
     // build window title
     char ver_str[12];
     version_string(version, ver_str);
-    const size_t sz_win_title = (sizeof(uint8_t) * strlen(ver_str) + strlen(name)) + 2;
+    const size_t sz_win_title = (sizeof(u8) * strlen(ver_str) + strlen(name)) + 2;
     char window_title[sz_win_title];
     sprintf(window_title, "%s v%s", name, ver_str);
 
@@ -113,8 +113,8 @@ void eng_refresh(engine_t* eng)
 
     int mx, my;
     SDL_GetMouseState(&mx, &my);
-    eng->mouse_pos.x = (float)mx;
-    eng->mouse_pos.y = (float)my;
+    eng->mouse_pos.x = (f32)mx;
+    eng->mouse_pos.y = (f32)my;
     eng->mouse_pos.x /= eng->scr_scale_x;
     eng->mouse_pos.y /= eng->scr_scale_y;
 

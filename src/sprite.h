@@ -2,6 +2,7 @@
 #define _H_IMGFILE
 
 #include "c99defs.h"
+#include "types.h"
 
 #include <SDL.h>
 
@@ -22,11 +23,11 @@ typedef enum {
 } pix_fmt_t;
 
 typedef struct sprite_s {
-    uint8_t* data;
+    u8* data;
     imgtype_t type;
     SDL_Surface* surface;
     SDL_Texture* texture;
-    int32_t scaling;
+    i32 scaling;
     bool has_alpha;
 } sprite_t;
 
@@ -34,19 +35,19 @@ typedef struct sprite_s {
 
 typedef struct ss_frame_s {
     SDL_Rect bounds;
-    float duration;
+    f32 duration;
 } ss_frame_t;
 
 typedef struct sprite_sheet_s {
-    int32_t width;
-    int32_t height;
+    i32 width;
+    i32 height;
     sprite_t* backing_sprite;
     size_t num_frames;
     ss_frame_t* frames;
 } sprite_sheet_t;
 
 bool sprite_load(const char* path, sprite_t** out);
-void sprite_create(uint8_t* data, uint32_t w, uint32_t h, uint32_t bpp, uint32_t stride, uint32_t format, sprite_t** out);
+void sprite_create(u8* data, u32 w, u32 h, u32 bpp, u32 stride, u32 format, sprite_t** out);
 bool sprite_create_texture(SDL_Renderer* ren, sprite_t* img);
 void sprite_shutdown(sprite_t* img);
 

@@ -2,6 +2,7 @@
 #define _H_SYSTEM
 
 #include "c99defs.h"
+#include "types.h"
 #include "entity.h"
 #include "sprite.h"
 #include "vector.h"
@@ -20,22 +21,22 @@ typedef enum {
 } engine_state_t;
 
 typedef struct engine_s {
-    int32_t adapter_index;
+    i32 adapter_index;
 
     SDL_Window* window;
     SDL_Renderer* renderer;
     // SDL_Surface* scr_surface;
     // SDL_Texture* scr_texture;
 
-    int32_t wnd_width, wnd_height;
-    int32_t scr_width, scr_height;
-    float scr_scale_x, scr_scale_y;
+    i32 wnd_width, wnd_height;
+    i32 scr_width, scr_height;
+    f32 scr_scale_x, scr_scale_y;
     rect_t scr_bounds;
     vec2f_t mouse_pos;
 
-    float target_fps;
-    double target_frametime;
-    int32_t frame_count;
+    f32 target_fps;
+    f64 target_frametime;
+    i32 frame_count;
 
     engine_state_t state;
     bool debug;
@@ -46,12 +47,12 @@ typedef struct engine_s {
 
 extern engine_t* engine;
 
-bool eng_init(const char* name, int32_t version, engine_t* eng);
+bool eng_init(const char* name, i32 version, engine_t* eng);
 void eng_refresh(engine_t* eng);
 void eng_shutdown(engine_t* eng);
 
 void eng_init_timing(void);
-double eng_get_time(void);
+f64 eng_get_time(void);
 
 game_resource_t* eng_get_resource(engine_t* eng, const char* name);
 

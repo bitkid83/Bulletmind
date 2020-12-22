@@ -116,9 +116,9 @@ game_resource_t* make_game_resource(engine_t* eng, const char* asset_name, const
             // Read sprite sheet metadata
             toml_table_t* meta = toml_table_in(nfo, "meta");
             char* sprite_path = NULL;
-            int32_t sheet_width = 0;
-            int32_t sheet_height = 0;
-            int32_t frame_scale_factor = 1;
+            i32 sheet_width = 0;
+            i32 sheet_height = 0;
+            i32 frame_scale_factor = 1;
             read_table_string(meta, "path", &sprite_path);
             read_table_int32(meta, "width", &sheet_width);
             read_table_int32(meta, "height", &sheet_height);
@@ -150,23 +150,23 @@ game_resource_t* make_game_resource(engine_t* eng, const char* asset_name, const
             for (size_t i = 0; i < num_frames; i++) {
                 ss_frame_t* ss_frame = &sprite_sheet->frames[i];
                 toml_table_t* frame_nfo = toml_table_at(frames, i);
-                int32_t x = 0;
-                int32_t y = 0;
-                int32_t width = 0;
-                int32_t height = 0;
-                double duration = 0.f;
+                i32 x = 0;
+                i32 y = 0;
+                i32 width = 0;
+                i32 height = 0;
+                f64 duration = 0.f;
 
                 read_table_int32(frame_nfo, "x", &x);
                 read_table_int32(frame_nfo, "y", &y);
                 read_table_int32(frame_nfo, "w", &width);
                 read_table_int32(frame_nfo, "h", &height);
-                read_table_double(frame_nfo, "duration", &duration);
+                read_table_f64(frame_nfo, "duration", &duration);
 
                 ss_frame->bounds.x = x;
                 ss_frame->bounds.y = y;
                 ss_frame->bounds.w = width;
                 ss_frame->bounds.h = height;
-                ss_frame->duration = (float)duration;
+                ss_frame->duration = (f32)duration;
             }
 
             resource = arena_alloc(

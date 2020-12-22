@@ -5,14 +5,14 @@
 
 static size_t arena_allocated_bytes = 0;
 
-static uint8_t arena_buf[ARENA_TOTAL_BYTES];
+static u8 arena_buf[ARENA_TOTAL_BYTES];
 static arena_t mem_arena = {
     NULL, 0, 0, 0
 };
 
 void arena_init(arena_t* arena, void* backing_buffer, size_t sz_backing)
 {
-    arena->buffer = (uint8_t*)backing_buffer;
+    arena->buffer = (u8*)backing_buffer;
     arena->sz_buffer = sz_backing;
     arena->curr_offset = 0;
     arena->prev_offset = 0;

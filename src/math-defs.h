@@ -1,6 +1,7 @@
 #pragma once
 
 #include "c99defs.h"
+#include "types.h"
 
 #include <math.h>
 

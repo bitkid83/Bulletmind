@@ -18,6 +18,8 @@
         "vector.h": "c",
         "bitflags.h": "c",
         "performance.h": "c",
-        "math.h": "c"
+        "math.h": "c",
+        "limits": "cpp",
+        "*.tcc": "cpp"
     }
 }

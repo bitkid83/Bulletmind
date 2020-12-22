@@ -1,43 +1,42 @@
 #include "performance.h"
 
-#define SDL_PERF
-
-#if defined (SDL_PERF)
-#include <SDL.h>
-#elif defined(BM_WINDOWS)
+#if defined(BM_WINDOWS)
 #include <Windows.h>
+#else
+#include <SDL.h>
+#define SDL_PERF
 #endif
 
-static inline uint64_t get_clock_freq(void) {
+static inline u64 get_clock_freq(void) {
 #if defined(SDL_PERF)
-    const uint64_t freq = SDL_GetPerformanceFrequency();
+    const u64 freq = SDL_GetPerformanceFrequency();
 #elif defined(BM_WINDOWS)
     LARGE_INTEGER clock_freq = { 0 };
     QueryPerformanceFrequency(&clock_freq);
-    const uint64_t freq = clock_freq.QuadPart;
+    const u64 freq = clock_freq.QuadPart;
 #endif
     return freq;
 }
 
-double perf_seconds(void) {
+f64 perf_seconds(void) {
 #if defined(SDL_PERF)
-    const double seconds = (double)SDL_GetPerformanceCounter() /
-        (double)get_clock_freq();
+    const f64 seconds = (f64)SDL_GetPerformanceCounter() /
+        (f64)get_clock_freq();
 #elif defined(BM_WINDOWS)
     LARGE_INTEGER qpc_value = { 0 };
     qpc_value.QuadPart = 0LL;
 
     QueryPerformanceCounter(&qpc_value);
 
-    const double seconds = (double)((double)(qpc_value.QuadPart) / (double)(get_clock_freq()));
+    const f64 seconds = (f64)((f64)(qpc_value.QuadPart) / (f64)(get_clock_freq()));
 #endif
     return seconds;
 }
 
-uint64_t perf_microseconds(void) {
-    return (uint64_t)(perf_seconds() * 1000000ULL);
+u64 perf_microseconds(void) {
+    return (u64)(perf_seconds() * 1000000ULL);
 }
 
-double perf_milliseconds(void) {
-    return (double)((double)(perf_microseconds()) / 1000.0);
+f64 perf_milliseconds(void) {
+    return (f64)((f64)(perf_microseconds()) / 1000.0);
 }

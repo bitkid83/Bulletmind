@@ -2,6 +2,7 @@
 #define _H_MEM_ARENA
 
 #include "c99defs.h"
+#include "types.h"
 
 // Basic linear allocator
 // https://www.gingerbill.org/article/2019/02/08/memory-allocation-strategies-002/
@@ -13,13 +14,13 @@
 #define ARENA_TOTAL_BYTES 8388608 // 8MiB
 
 typedef struct arena_s {
-    uint8_t* buffer;
+    u8* buffer;
     size_t sz_buffer;
     size_t prev_offset;
     size_t curr_offset;
 } arena_t;
 
-uint8_t arena_buf[ARENA_TOTAL_BYTES];
+u8 arena_buf[ARENA_TOTAL_BYTES];
 arena_t mem_arena;
 
 void arena_init(arena_t* arena, void* backing_buffer, size_t sz_backing);

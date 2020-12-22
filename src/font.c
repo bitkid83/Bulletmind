@@ -22,11 +22,11 @@
 #define FONT_COLS 16
 #define FONT_ROWS 6
 
-void font_print(engine_t* eng, int32_t x, int32_t y, float scale, const char *str, ...) {
+void font_print(engine_t* eng, i32 x, i32 y, f32 scale, const char *str, ...) {
     va_list args;
     char text[TEMP_STRING_MAX];
-    int32_t c = 0;
-    int32_t fx, tu, tv;
+    i32 c = 0;
+    i32 fx, tu, tv;
 
     if (str == NULL)
         return;
@@ -42,8 +42,8 @@ void font_print(engine_t* eng, int32_t x, int32_t y, float scale, const char *st
     while (text[c] != '\0') {
         if (text[c] >= FONT_BASE && text[c] < FONT_NULL) {
             fx = text[c] - FONT_BASE;
-            tu = (float)(fx % FONT_COLS) * FONT_PX;
-            tv = (float)(fx / FONT_COLS) * FONT_PX;
+            tu = (f32)(fx % FONT_COLS) * FONT_PX;
+            tv = (f32)(fx / FONT_COLS) * FONT_PX;
             SDL_Rect src = { tu, tv, FONT_PX, FONT_PX };
             SDL_Rect dst = { x, y, FONT_PX * scale, FONT_PX * scale };
             SDL_RenderCopy((SDL_Renderer *)eng->renderer, font_sprite->texture, &src, &dst);

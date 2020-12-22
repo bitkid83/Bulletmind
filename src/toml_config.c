@@ -34,7 +34,7 @@ bool read_toml_config(const char* path, toml_table_t** toml) {
 }
 
 // toml does allocation inside toml_raw_to_X functions (i.e. toml_rtos)
-bool read_table_string(toml_table_t* table, const char* key, char** string) {
+bool read_table_string(toml_table_t* table, const char* key, char** val) {
     if (table != NULL) {
         const char* raw_value = toml_raw_in(table, key);
         char* tmp = NULL;
@@ -42,9 +42,9 @@ bool read_table_string(toml_table_t* table, const char* key, char** string) {
         if (raw_value != NULL)
             toml_rtos(raw_value, &tmp);
 
-        *string = realloc(*string, (sizeof(char) * strlen(tmp))+1);
+        *val = realloc(*val, (sizeof(char) * strlen(tmp))+1);
         if (tmp != NULL)
-            memcpy(*string, tmp, sizeof(char) * strlen(tmp) + 1);
+            memcpy(*val, tmp, sizeof(char) * strlen(tmp) + 1);
 
         free(tmp);
 
@@ -54,13 +54,13 @@ bool read_table_string(toml_table_t* table, const char* key, char** string) {
     return false;
 }
 
-bool read_table_int32(toml_table_t* table, const char* key, int32_t* i32) {
+bool read_table_int32(toml_table_t* table, const char* key, i32* val) {
     if (table != NULL) {
         const char* raw_value = toml_raw_in(table, key);
-        int64_t tmp = 0LL;
+        i64 tmp = 0LL;
         if (raw_value != NULL) {
             toml_rtoi(raw_value, &tmp);
-            *i32 = (int32_t)tmp;
+            *val = (i32)tmp;
         }
         return true;
     }
@@ -68,13 +68,13 @@ bool read_table_int32(toml_table_t* table, const char* key, int32_t* i32) {
     return false;
 }
 
-bool read_table_double(toml_table_t* table, const char* key, double* dbl) {
+bool read_table_f64(toml_table_t* table, const char* key, f64* val) {
     if (table != NULL) {
         const char* raw_value = toml_raw_in(table, key);
-        double tmp = 0.0;
+        f64 tmp = 0.0;
         if (raw_value != NULL) {
             toml_rtod(raw_value, &tmp);
-            *dbl = tmp;
+            *val = tmp;
         }
         return true;
     }

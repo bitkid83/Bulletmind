@@ -4,7 +4,7 @@
 buffer_t* buffer_new(size_t size) {
     buffer_t* buf = (buffer_t*)malloc(sizeof(buffer_t));
     buf->size = size;
-    buf->data = (uint8_t*)malloc(size);
+    buf->data = (u8*)malloc(size);
     memset(buf->data, 0, size);
     return buf;
 }
@@ -37,18 +37,18 @@ void buffer_setdata(buffer_t* buf, void* data, size_t size) {
     if (buf) {
         if (buf->data) {
             free(buf->data);
-            buf->data = (uint8_t*)realloc(buf->data, size);
+            buf->data = (u8*)realloc(buf->data, size);
             memcpy(buf->data, data, size);
             buf->size = size;
         }
         else {
-            buf->data = (uint8_t*)malloc(size);
+            buf->data = (u8*)malloc(size);
             buf->size = size;
         }
     }
 }
 
-uint8_t buffer_resize(buffer_t* buf, size_t size) {
+u8 buffer_resize(buffer_t* buf, size_t size) {
     if (buf) {
         // clearing the buffer
         if (size <= 0) {
@@ -59,7 +59,7 @@ uint8_t buffer_resize(buffer_t* buf, size_t size) {
         } else
         // shrink the buffer
         if (size <= buf->size && buf->data) {
-            uint8_t* shrink = realloc(buf->data, size);
+            u8* shrink = realloc(buf->data, size);
             if (shrink != NULL) { buf->data = shrink; }
             else {
                 free(shrink);
@@ -69,7 +69,7 @@ uint8_t buffer_resize(buffer_t* buf, size_t size) {
         } else
         // grow the buffer
         if (size > buf->size) {
-            uint8_t* grow = (uint8_t*)malloc(sizeof(uint8_t) * size);
+            u8* grow = (u8*)malloc(sizeof(u8) * size);
             memcpy(grow, buf->data, size);
             buf->data = grow;
             buf->size = size;

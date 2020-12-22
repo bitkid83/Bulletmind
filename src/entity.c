@@ -25,10 +25,12 @@
 #define SATELLITE_CAPS (1 << SATELLITE | 1 << MOVER | 1 << SHOOTER | 1 << COLLIDER | 1 << RENDERABLE)
 #define BULLET_CAPS (1 << BULLET | 1 << MOVER | 1 << COLLIDER | 1 << RENDERABLE)
 
-int32_t active_ents = 0; // extern
-int32_t last_entity = 0; // extern
+i32 active_ents = 0; // extern
+i32 last_entity = 0; // extern
 
-bool ent_init(entity_t** ent_list, const int32_t num_ents) {
+static const f32 kBulletSpeedMultiplier = 24000.f;
+
+bool ent_init(entity_t** ent_list, const i32 num_ents) {
     if (ent_list == NULL)
         return false;
 
@@ -41,7 +43,7 @@ bool ent_init(entity_t** ent_list, const int32_t num_ents) {
     return true;
 }
 
-void ent_refresh(engine_t* eng, const double dt) {
+void ent_refresh(engine_t* eng, const f64 dt) {
     if (eng == NULL)
         return;
 
@@ -49,7 +51,7 @@ void ent_refresh(engine_t* eng, const double dt) {
     const vec2f_t mouse_pos = eng->mouse_pos;
 
     active_ents = 0;
-    for (int32_t edx = 0; edx < MAX_ENTITIES; edx++) {
+    for (i32 edx = 0; edx < MAX_ENTITIES; edx++) {
         entity_t* e = ent_by_index(ent_list, edx);
 
         if (e == NULL)
@@ -91,8 +93,8 @@ void ent_refresh(engine_t* eng, const double dt) {
                 }
 
                 // player shooting
-                float p_weap_fire_rate = 0.100f;
-                static double p_shoot_time = 0.0;
+                f32 p_weap_fire_rate = 0.100f;
+                static f64 p_shoot_time = 0.0;
                 if (p_shooting && perf_seconds() >= p_shoot_time) {
                     p_shoot_time = perf_seconds() + p_weap_fire_rate;
                     entity_t* player = ent_by_index(ent_list, PLAYER_ENTITY_INDEX);
@@ -107,7 +109,7 @@ void ent_refresh(engine_t* eng, const double dt) {
                         bullet_size,
                         &bullet_color,
                         BULLET_CAPS,
-                        (double)BASIC_BULLET_LIFETIME
+                        (f64)BASIC_BULLET_LIFETIME
                     );
                     ent_set_mouse_org(bullet, mouse);
                 }
@@ -131,7 +133,7 @@ void ent_refresh(engine_t* eng, const double dt) {
                 if (player_to_mouse.x > 0.f)
                     flip = true;
 
-                double frame_scale = 1.0;
+                f64 frame_scale = 1.0;
                 vec2f_t vel_tmp = { 0.f, 0.f };
                 vec2f_fabsf(&vel_tmp, e->vel);
                 frame_scale = MAX(vel_tmp.x, vel_tmp.y);
@@ -150,7 +152,7 @@ void ent_refresh(engine_t* eng, const double dt) {
             if (!strcmp(e->name, "satellite")) {
                 draw_rect_solid(
                     engine->renderer,
-                    (float)e->bbox.x, (float)e->bbox.y,
+                    (f32)e->bbox.x, (f32)e->bbox.y,
                     e->size.x, e->size.y,
                     e->color
                 );
@@ -183,12 +185,12 @@ void ent_refresh(engine_t* eng, const double dt) {
         }
 
         // if (ent_has_caps(e, COLLIDER)) {
-        // 	for (int32_t c = 0; c < MAX_ENTITIES; c++) {
+        // 	for (i32 c = 0; c < MAX_ENTITIES; c++) {
         //         entity_t* collider = ent_by_index(ent_list, c);
         // 		if (e == collider) break; // don't check against self
         // 		if (ent_has_caps(collider, COLLIDER)) {
-        // 			float ex = e->org.x + e->bbox.w;
-        // 			float ey = e->org.y + e->bbox.h;
+        // 			f32 ex = e->org.x + e->bbox.w;
+        // 			f32 ey = e->org.y + e->bbox.h;
         // 			if (ex >= collider->org.x) {
         // 				e->org.x = collider->org.x - e->bbox.w;
         // 			}
@@ -209,7 +211,7 @@ entity_t* ent_new(entity_t* ent_list) {
     entity_t* e = NULL;
 
     // search entity list for first slot with no caps set
-    for (int32_t edx = 0; edx < MAX_ENTITIES; edx++) {
+    for (i32 edx = 0; edx < MAX_ENTITIES; edx++) {
         e = ent_by_index(ent_list, edx);
         if (e == NULL) {
             printf("Entity slot %d is NULL!\n", edx);
@@ -227,7 +229,7 @@ entity_t* ent_new(entity_t* ent_list) {
     return e;
 }
 
-entity_t* ent_by_index(entity_t* ent_list, const int32_t idx) {
+entity_t* ent_by_index(entity_t* ent_list, const i32 idx) {
     entity_t* e = &ent_list[idx];
     if (e == NULL) {
         printf("ent_by_index - NULL entity at index %d\n", idx);
@@ -253,20 +255,20 @@ entity_t* ent_spawn(
     const vec2f_t org,
     const vec2i_t size,
     const rgba_t* color,
-    const int32_t caps,
-    double lifetime)
+    const i32 caps,
+    f64 lifetime)
 {
     entity_t* e = ent_new(ent_list);
     if (e != NULL) {
         const vec2i_t half_size = {
-            (int32_t)(size.x / 2),
-            (int32_t)(size.y / 2)
+            (i32)(size.x / 2),
+            (i32)(size.y / 2)
         };
         const rect_t bounding = {
-            (int32_t)org.x - half_size.x,
-            (int32_t)org.y - half_size.y,
-            (int32_t)org.x + half_size.x,
-            (int32_t)org.y + half_size.y,
+            (i32)org.x - half_size.x,
+            (i32)org.y - half_size.y,
+            (i32)org.x + half_size.x,
+            (i32)org.y + half_size.y,
         };
 
         ent_set_name(e, name);
@@ -302,7 +304,7 @@ void ent_lifetime_update(entity_t* e) {
 
 void ent_bbox_update(entity_t* e) {
     vec2f_t half_size = { 0.f, 0.f };
-    vec2f_set(&half_size, (float)(e->size.x) * 0.5f, (float)(e->size.y) * 0.5f);
+    vec2f_set(&half_size, (f32)(e->size.x) * 0.5f, (f32)(e->size.y) * 0.5f);
     e->bbox.x = e->org.x - half_size.x;
     e->bbox.y = e->org.y - half_size.y;
 }
@@ -320,7 +322,7 @@ void ent_remove_caps(entity_t* e, const entity_caps_t caps) {
     CLEAR_FLAG(e->caps, caps);
 }
 
-void ent_set_caps(entity_t* e, const int32_t cap_flags) {
+void ent_set_caps(entity_t* e, const i32 cap_flags) {
     e->caps = cap_flags;
 }
 
@@ -336,7 +338,7 @@ void ent_set_pos(entity_t* e, const vec2f_t org) {
     vec2f_copy(&e->org, org);
 }
 
-void ent_set_vel(entity_t* e, const vec2f_t vel, const float ang) {
+void ent_set_vel(entity_t* e, const vec2f_t vel, const f32 ang) {
     vec2f_copy(&e->vel, vel);
     e->angle = atan(vec2f_dot(e->org, e->vel));
 }
@@ -344,15 +346,15 @@ void ent_set_vel(entity_t* e, const vec2f_t vel, const float ang) {
 void ent_set_bbox(entity_t* e, const rect_t* bbox) {
     e->bbox = *bbox;
     const vec2i_t bbox_half_size = { e->bbox.w / 2, e->bbox.h / 2 };
-    e->org.x -= (float)bbox_half_size.x;
-    e->org.y -= (float)bbox_half_size.y;
+    e->org.x -= (f32)bbox_half_size.x;
+    e->org.y -= (f32)bbox_half_size.y;
 }
 
 void ent_set_mouse_org(entity_t* e, const vec2f_t m_org) {
     vec2f_copy(&e->mouse_org, m_org);
 }
 
-void ent_euler_move(entity_t* e, const vec2f_t accel, const float friction, const double dt) {
+void ent_euler_move(entity_t* e, const vec2f_t accel, const f32 friction, const f64 dt) {
     vec2f_t delta = { 0.f, 0.f };
     vec2f_t accel_scaled = { 0.f, 0.f };
 
@@ -367,8 +369,8 @@ void ent_euler_move(entity_t* e, const vec2f_t accel, const float friction, cons
 bool ent_spawn_player_and_satellite(entity_t* ent_list) {
     // center on screen
     vec2f_t player_org = {
-        (float)(CAMERA_WIDTH * 0.5f),
-        (float)(CAMERA_HEIGHT * 0.5f)
+        (f32)(CAMERA_WIDTH * 0.5f),
+        (f32)(CAMERA_HEIGHT * 0.5f)
     };
     vec2i_t player_size = { 16, 16 };
     rgba_t player_color = { 0x0, 0x0, 0xff, 0xff };
@@ -391,7 +393,7 @@ bool ent_spawn_player_and_satellite(entity_t* ent_list) {
     vec2f_t sat_org = { 0.f, 0.f };
     vec2i_t sat_size = { 16, 16 };
     rgba_t sat_color = { 0x90, 0xf5, 0x42, 0xff };
-    float sat_offset = 512.f;
+    f32 sat_offset = 512.f;
     vec2f_set(&sat_org, player_org.x + sat_offset, player_org.y + sat_offset);
     entity_t* satellite = ent_spawn(
         ent_list,
@@ -410,10 +412,10 @@ bool ent_spawn_player_and_satellite(entity_t* ent_list) {
     return true;
 }
 
-void ent_move_player(entity_t* player, engine_t* engine, double dt) {
+void ent_move_player(entity_t* player, engine_t* engine, f64 dt) {
     // Player entity movement
     vec2f_t p_accel = { 0 };
-    float p_speed = 800.f;
+    f32 p_speed = 800.f;
     if (cmd_getstate(CMD_PLAYER_SPEED) == true) { p_speed *= 2.f; }
     if (cmd_getstate(CMD_PLAYER_UP) == true) { p_accel.y = -p_speed; }
     if (cmd_getstate(CMD_PLAYER_DOWN) == true) { p_accel.y = p_speed; }
@@ -422,36 +424,36 @@ void ent_move_player(entity_t* player, engine_t* engine, double dt) {
 
     ent_euler_move(player, p_accel, 0.035, dt);
     // screen bounds checking
-    if (player->org.x > (float)engine->scr_bounds.w) { player->org.x = (float)engine->scr_bounds.w; }
-    if (player->org.y > (float)engine->scr_bounds.h) { player->org.y = (float)engine->scr_bounds.h; }
-    if (player->org.x < (float)engine->scr_bounds.x) { player->org.x = (float)engine->scr_bounds.x; }
-    if (player->org.y < (float)engine->scr_bounds.y) { player->org.y = (float)engine->scr_bounds.y; }
+    if (player->org.x > (f32)engine->scr_bounds.w) { player->org.x = (f32)engine->scr_bounds.w; }
+    if (player->org.y > (f32)engine->scr_bounds.h) { player->org.y = (f32)engine->scr_bounds.h; }
+    if (player->org.x < (f32)engine->scr_bounds.x) { player->org.x = (f32)engine->scr_bounds.x; }
+    if (player->org.y < (f32)engine->scr_bounds.y) { player->org.y = (f32)engine->scr_bounds.y; }
     ent_bbox_update(player);
 }
 
-void ent_move_satellite(entity_t* satellite, entity_t* player, engine_t* engine, double dt) {
-    static float sat_speed = 750.f;
+void ent_move_satellite(entity_t* satellite, entity_t* player, engine_t* engine, f64 dt) {
+    static f32 sat_speed = 750.f;
     vec2f_t dist = { 0.f, 0.f };
     vec2f_sub(&dist, player->org, satellite->org);
     vec2f_norm(&dist, dist);
 
-    const float orbit_dist = 48.f;
-    const float orbit_thresh = 64.f;
+    const f32 orbit_dist = 48.f;
+    const f32 orbit_thresh = 64.f;
     const bool is_orbiting = (fabsf(dist.x) < orbit_thresh || fabsf(dist.y) < orbit_thresh);
 
-    static float orbit_angle = 0.f;
+    static f32 orbit_angle = 0.f;
     if (is_orbiting) {
         sat_speed = 350.f;
         vec2f_t orbit_ring = { 0.f, 0.f };
         vec2f_t orbit_vec = { 0.f, 0.f };
-        float px = player->org.x;
-        float py = player->org.y;
+        f32 px = player->org.x;
+        f32 py = player->org.y;
 
         orbit_ring.x = (px + cos(orbit_angle) * orbit_dist);
         orbit_ring.y = (py + sin(orbit_angle) * orbit_dist);
         vec2f_sub(&orbit_vec, player->org, orbit_ring);
 
-        // orbit_angle += DEG_TO_RAD((float)(dt * 360.f));
+        // orbit_angle += DEG_TO_RAD((f32)(dt * 360.f));
         orbit_angle += DEG_TO_RAD(3.0f);
         if (orbit_angle > DEG_TO_RAD(360.f))
             orbit_angle = 0.f;
@@ -461,7 +463,7 @@ void ent_move_satellite(entity_t* satellite, entity_t* player, engine_t* engine,
         vec2f_mulf(&orbit_vec, orbit_vec, 800.f);
         vec2f_sub(&dist, dist, orbit_vec);
 
-        // uint8_t r,g,b,a;
+        // u8 r,g,b,a;
         // SDL_GetRenderDrawColor(engine->renderer, &r, &g, &b, &a);
         // SDL_SetRenderDrawColor(engine->renderer, 0xff, 0xaa, 0x00, 0xff);
         // SDL_RenderDrawLine(engine->renderer, player->org.x, player->org.y, satellite->org.x, satellite->org.y);
@@ -476,13 +478,13 @@ void ent_move_satellite(entity_t* satellite, entity_t* player, engine_t* engine,
     ent_bbox_update(satellite);
 }
 
-void ent_move_bullet(entity_t* bullet, engine_t* engine, double dt) {
-    static vec2f_t dist = { 0.f, 0.f };
+void ent_move_bullet(entity_t* bullet, engine_t* engine, f64 dt) {
+    vec2f_t dist = { 0.f, 0.f };
     // vector between entity mouse origin and entity origin
     if (bullet->vel.x == 0.f && bullet->vel.y == 0.f) {
         vec2f_sub(&dist, bullet->mouse_org, bullet->org);
         vec2f_norm(&dist, dist);
-        vec2f_mulf(&dist, dist, 2500.f);
+        vec2f_mulf(&dist, dist, kBulletSpeedMultiplier);
     }
     // reflection: r = d-2(d*n)n where d*nd*n is the dot product, and nn must be normalized.
     ent_euler_move(bullet, dist, 0.0, dt);

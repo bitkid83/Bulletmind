@@ -1,8 +1,8 @@
 /*
 
 bulletmind
-(c) 2019 Paul Hindt
-v0.1.122219a
+(c) 2019-2020 Paul Hindt
+v0.1.122220a
 
 */
 
@@ -32,7 +32,7 @@ v0.1.122219a
 
 #include <SDL.h>
 
-void print_debug_info(engine_t* engine, double dt) {
+void print_debug_info(engine_t* engine, f64 dt) {
     if (engine) {
         entity_t* player_ent = ent_by_name(engine->ent_list, "player");
         char time_buf[TEMP_STRING_MAX];
@@ -59,24 +59,24 @@ int main(int argc, char** argv) {
     engine->wnd_height = WINDOW_HEIGHT;
     engine->scr_width = CAMERA_WIDTH;
     engine->scr_height = CAMERA_HEIGHT;
-    engine->scr_scale_x = (float)WINDOW_WIDTH / (float)CAMERA_WIDTH;
-    engine->scr_scale_y = (float)WINDOW_HEIGHT / (float)CAMERA_HEIGHT;
+    engine->scr_scale_x = (f32)WINDOW_WIDTH / (f32)CAMERA_WIDTH;
+    engine->scr_scale_y = (f32)WINDOW_HEIGHT / (f32)CAMERA_HEIGHT;
     engine->target_fps = 60.f;
 #if defined(BM_DEBUG)
     engine->debug = true;
 #else
     engine->debug = false;
 #endif
-    const uint32_t app_version = pack_version(APP_VER_MAJ, APP_VER_MIN, APP_VER_REV);
+    const u32 app_version = pack_version(APP_VER_MAJ, APP_VER_MIN, APP_VER_REV);
     if (!eng_init(APP_NAME, app_version, engine)) {
         printf("Something went wrong!\n");
         return -1;
     }
 
     // main loop
-    double dt = 0.0;
+    f64 dt = 0.0;
     while(engine->state != ES_QUIT) {
-        double frame_start = perf_seconds();
+        f64 frame_start = perf_seconds();
 
         switch(engine->state) {
             case ES_STARTUP:

@@ -13,30 +13,30 @@
 #include <string.h>
 
 typedef struct tga_header_s {
-    uint8_t id_length;              // field 1
-    uint8_t color_map_type;         // field 2
-    uint8_t image_type;             // field 3
+    u8 id_length;              // field 1
+    u8 color_map_type;         // field 2
+    u8 image_type;             // field 3
 
-    uint8_t color_map_spec[5];      // field 4
+    u8 color_map_spec[5];      // field 4
     /*
-        uint16_t first_entry_index;
-        uint16_t color_map_length;
-        uint8_t color_map_entry_size;
+        u16 first_entry_index;
+        u16 color_map_length;
+        u8 color_map_entry_size;
     */
 
-    uint16_t x_org;              // field 5
-    uint16_t y_org;
-    uint16_t width;
-    uint16_t height;
-    uint8_t bpp;
-    uint8_t desc;               // bits 3-0 = alpha channel depth, bits 5-4 img direction
+    u16 x_org;              // field 5
+    u16 y_org;
+    u16 width;
+    u16 height;
+    u8 bpp;
+    u8 desc;               // bits 3-0 = alpha channel depth, bits 5-4 img direction
 } tga_header_t;
 
 bool sprite_load(const char* path, sprite_t** out)
 {
     FILE* fptr = NULL;
     size_t fsize = 0;
-    uint8_t* fbuf = NULL;
+    u8* fbuf = NULL;
     sprite_t* img = NULL;
 
     if (path == NULL || out == NULL)
@@ -52,12 +52,12 @@ bool sprite_load(const char* path, sprite_t** out)
         fseek(fptr, 0 , SEEK_END);
         fsize = ftell(fptr);
         fseek(fptr, 0, SEEK_SET);
-        fbuf = (uint8_t*)malloc(fsize);
+        fbuf = (u8*)malloc(fsize);
         if (fptr == NULL) {
             printf("sprite_load: file %s has no data!\n", path);
             return false;
         }
-        else if (fread(fbuf, sizeof(uint8_t), fsize, fptr) != fsize) {
+        else if (fread(fbuf, sizeof(u8), fsize, fptr) != fsize) {
             printf("sprite_load: could not read to end of file %s\n", path);
             free(fbuf);
             fbuf = NULL;
@@ -74,17 +74,17 @@ bool sprite_load(const char* path, sprite_t** out)
             return false;
         }
 
-        uint16_t width = header->width;
-        uint16_t height = header->height;
-        uint8_t bytes_per_pixel = header->bpp / 8;
-        int32_t stride = width * bytes_per_pixel;
+        u16 width = header->width;
+        u16 height = header->height;
+        u8 bytes_per_pixel = header->bpp / 8;
+        i32 stride = width * bytes_per_pixel;
         size_t pixel_size = width * height * bytes_per_pixel;
 
-        img->data = (uint8_t*)arena_alloc(&mem_arena, pixel_size, DEFAULT_ALIGNMENT);
+        img->data = (u8*)arena_alloc(&mem_arena, pixel_size, DEFAULT_ALIGNMENT);
 
         printf("sprite_load: %s, %dx%d %d bytes per pixel\n", path, width, height, bytes_per_pixel);
 
-        uint8_t* tga_pixels = fbuf + tga_header_size;
+        u8* tga_pixels = fbuf + tga_header_size;
 
         // origin bit 1 = upper-left origin pixel
         if ((header->desc >> 5) & 1) {
@@ -92,12 +92,12 @@ bool sprite_load(const char* path, sprite_t** out)
         }
         // origin bit 0 = lower-left origin pixel
         else {
-            for (int32_t c = 0; c < height; c++) {
+            for (i32 c = 0; c < height; c++) {
                 memcpy(img->data + stride * c, tga_pixels + stride * (height - (c+1)), stride);
             }
         }
 
-        uint32_t pix_fmt = SDL_PIXELFORMAT_BGR24;
+        u32 pix_fmt = SDL_PIXELFORMAT_BGR24;
         if (bytes_per_pixel == 3) {
             pix_fmt = SDL_PIXELFORMAT_BGR24;
             img->has_alpha = false;
@@ -128,12 +128,12 @@ bool sprite_load(const char* path, sprite_t** out)
     return true;
 }
 
-void sprite_create(uint8_t* data, uint32_t w, uint32_t h, uint32_t bpp, uint32_t stride, uint32_t format, sprite_t** out)
+void sprite_create(u8* data, u32 w, u32 h, u32 bpp, u32 stride, u32 format, sprite_t** out)
 {
     sprite_t* img = (sprite_t*)arena_alloc(&mem_arena, sizeof(sprite_t), DEFAULT_ALIGNMENT);
     img->type = IMG_TYPE_RAW;
     size_t pixel_size = w * h * (bpp / 8);
-    img->data = (uint8_t*)arena_alloc(&mem_arena, pixel_size, DEFAULT_ALIGNMENT);
+    img->data = (u8*)arena_alloc(&mem_arena, pixel_size, DEFAULT_ALIGNMENT);
     memcpy(img->data, data, pixel_size);
     img->surface = SDL_CreateRGBSurfaceWithFormatFrom(
         img->data,

@@ -10,14 +10,14 @@ entity_t *entities;
 
 void cmd_init(void) {
     //todo(paulh): this is all nonsense, just make array_cmds a regular uint32
-    array_cmds = (uint32_t *)malloc(sizeof(uint32_t));
-    if (array_cmds != NULL) { memset(array_cmds, 0, sizeof(uint32_t)); }
+    array_cmds = (u32 *)malloc(sizeof(u32));
+    if (array_cmds != NULL) { memset(array_cmds, 0, sizeof(u32)); }
     *array_cmds = 0;
     printf("cmd_init OK\n");
 }
 
 //TODO(paulh): Use the bitfield macros for this instead
-bool cmd_getstate(uint32_t cmd)
+bool cmd_getstate(u32 cmd)
 {
     //bool triggeredcmd = (bit_check_uint32(*array_cmds, cmd) > 0) ? true : false;
     bool triggeredcmd = (*array_cmds & cmd);
@@ -25,7 +25,7 @@ bool cmd_getstate(uint32_t cmd)
     return triggeredcmd;
 }
 
-void cmd_toggle_bool(uint32_t cmd, bool* value)
+void cmd_toggle_bool(u32 cmd, bool* value)
 {
     static bool toggled = false;
     if (cmd_getstate(cmd) == true) {

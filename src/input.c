@@ -10,13 +10,13 @@
 #define MAX_MBUTTONS 64
 
 typedef struct {
-    uint8_t state;
-    int32_t cmd;
+    u8 state;
+    i32 cmd;
 } key_t;
 
 typedef struct {
-    uint8_t state;
-    int32_t cmd;
+    u8 state;
+    i32 cmd;
 } mbutton_t;
 
 static key_t *array_keys = NULL;
@@ -49,7 +49,7 @@ void inp_init() {
     printf("inp_init OK\n");
 }
 
-uint32_t inp_refresh() {
+u32 inp_refresh() {
     return 0;
 }
 
@@ -67,21 +67,21 @@ void inp_shutdown() {
     printf("inp_shutdown OK\n");
 }
 
-void inp_set_key_state(uint16_t key, uint8_t state) {
+void inp_set_key_state(u16 key, u8 state) {
     if (array_keys != NULL) {
         if (array_keys[key].state != state) {
             array_keys[key].state = state;
         }
 
-        int32_t cmd = (array_keys[key].state > 0) ? array_keys[key].cmd : -array_keys[key].cmd;
+        i32 cmd = (array_keys[key].state > 0) ? array_keys[key].cmd : -array_keys[key].cmd;
         if (cmd > 0) { *array_cmds |= cmd; }
         if (cmd < 0) { *array_cmds &= ~(-cmd); }
         //printf("inp_set_key_state - [key:state:cmd] %d : %d : %d\n", key, state, cmd);
     }
 }
 
-uint8_t	inp_get_key_state(uint16_t key) {
-    uint8_t state = 0;
+u8	inp_get_key_state(u16 key) {
+    u8 state = 0;
     if (array_keys != NULL) {
         state = array_keys[key].state;
     }
@@ -89,11 +89,11 @@ uint8_t	inp_get_key_state(uint16_t key) {
     return state;
 }
 
-bool inp_set_key_bind(uint16_t key, int32_t cmd) {
+bool inp_set_key_bind(u16 key, i32 cmd) {
     bool found_cmd = false;
     const char *cmd_name = NULL;
 
-    for (uint32_t i = 0; i < COMMAND_COUNT; i++) {
+    for (u32 i = 0; i < COMMAND_COUNT; i++) {
         if (COMMAND_LIST[i] == cmd) {
             cmd_name = COMMAND_NAMES[i];
             found_cmd = true;
@@ -114,11 +114,11 @@ bool inp_set_key_bind(uint16_t key, int32_t cmd) {
     return true;
 }
 
-bool inp_set_mouse_bind(uint8_t button, int32_t cmd) {
+bool inp_set_mouse_bind(u8 button, i32 cmd) {
     bool found_cmd = false;
     const char *cmd_name = NULL;
 
-    for (uint32_t i = 0; i < COMMAND_COUNT; i++) {
+    for (u32 i = 0; i < COMMAND_COUNT; i++) {
         if (COMMAND_LIST[i] == cmd) {
             cmd_name = COMMAND_NAMES[i];
             found_cmd = true;
@@ -138,14 +138,14 @@ bool inp_set_mouse_bind(uint8_t button, int32_t cmd) {
     return true;
 }
 
-void inp_set_mouse_state(uint8_t button, uint8_t state) {
+void inp_set_mouse_state(u8 button, u8 state) {
     if (array_mbuttons != NULL) {
         if (array_mbuttons[button].state != state) {
             array_mbuttons[button].state = state;
         }
     }
 
-    int32_t cmd = (array_mbuttons[button].state > 0) ? array_mbuttons[button].cmd : -array_mbuttons[button].cmd;
+    i32 cmd = (array_mbuttons[button].state > 0) ? array_mbuttons[button].cmd : -array_mbuttons[button].cmd;
     if (cmd > 0) { *array_cmds |= cmd; }
     if (cmd < 0) { *array_cmds &= ~cmd; }
     //printf("inp_set_mouse_state - [button:state:cmd] %d : %d : %d\n", button, state, cmd);

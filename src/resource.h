@@ -2,6 +2,7 @@
 #define _H_RESOURCE
 
 #include "c99defs.h"
+#include "types.h"
 
 #define MAX_GAME_RESOURCES 256
 
