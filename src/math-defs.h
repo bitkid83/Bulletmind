@@ -17,11 +17,11 @@ extern "C" {
 #define M_2PI (2.f * M_PI)
 #endif
 
-#define RAD_TO_DEG(rad) (180.f/M_PI) * rad
-#define DEG_TO_RAD(deg) (M_PI/180.f) * deg
+#define RAD_TO_DEG(rad) (180.f / M_PI) * rad
+#define DEG_TO_RAD(deg) (M_PI / 180.f) * deg
 
-#define MIN(a,b) (((a)<(b))?(a):(b))
-#define MAX(a,b) (((a)>(b))?(a):(b))
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
 #ifdef __cplusplus
 }

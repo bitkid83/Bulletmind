@@ -17,31 +17,31 @@ typedef struct engine_s engine_t;
 #define ENT_NAME_MAX 4096
 
 typedef enum {
-    MOVER = 1,
-    SHOOTER = 2,
-    DESTROYABLE = 3,
-    COLLIDER = 4,
-    SATELLITE = 5,
-    BULLET = 6,
-    PLAYER = 7,
-    RENDERABLE = 8,
+	MOVER = 1,
+	SHOOTER = 2,
+	DESTROYABLE = 3,
+	COLLIDER = 4,
+	SATELLITE = 5,
+	BULLET = 6,
+	PLAYER = 7,
+	RENDERABLE = 8,
 } entity_caps_t;
 
 typedef struct entity_s {
-    i32 index;
-    char name[ENT_NAME_MAX];
-    i32 caps;
+	i32 index;
+	char name[ENT_NAME_MAX];
+	i32 caps;
 
-    vec2f_t org;
-    vec2f_t vel;
-    vec2i_t size;
-    rect_t bbox;
-    vec2f_t mouse_org; // click origin
-    rgba_t color;
-    f32 angle;
+	vec2f_t org;
+	vec2f_t vel;
+	vec2i_t size;
+	rect_t bbox;
+	vec2f_t mouse_org; // click origin
+	rgba_t color;
+	f32 angle;
 
-    f64 timestamp;
-    f64 lifetime;
+	f64 timestamp;
+	f64 lifetime;
 } entity_t;
 
 extern i32 active_ents;
@@ -55,7 +55,8 @@ entity_t* ent_new(entity_t* ent_list);
 entity_t* ent_by_name(entity_t* ent_list, const char* name);
 entity_t* ent_by_index(entity_t* ent_list, const i32 idx);
 
-entity_t* ent_spawn(entity_t* ent_list, const char* name, const vec2f_t org, const vec2i_t size, const rgba_t* color, const i32 caps, const f64 lifetime);
+entity_t* ent_spawn(entity_t* ent_list, const char* name, const vec2f_t org, const vec2i_t size,
+		    const rgba_t* color, const i32 caps, const f64 lifetime);
 void ent_lifetime_update(entity_t* e);
 void ent_bbox_update(entity_t* e);
 

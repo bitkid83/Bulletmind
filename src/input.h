@@ -13,7 +13,7 @@ u32 inp_refresh();
 void inp_shutdown();
 
 void inp_set_key_state(u16 key, u8 state);
-u8 inp_get_key_state(u16 key);
+u8   inp_get_key_state(u16 key);
 bool inp_set_key_bind(u16 key, i32 cmd);
 
 bool inp_set_mouse_bind(u8 button, i32 cmd);

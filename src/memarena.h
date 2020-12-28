@@ -14,10 +14,10 @@
 #define ARENA_TOTAL_BYTES 8388608 // 8MiB
 
 typedef struct arena_s {
-    u8* buffer;
-    size_t sz_buffer;
-    size_t prev_offset;
-    size_t curr_offset;
+	u8* buffer;
+	size_t sz_buffer;
+	size_t prev_offset;
+	size_t curr_offset;
 } arena_t;
 
 u8 arena_buf[ARENA_TOTAL_BYTES];

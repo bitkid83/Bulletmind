@@ -7,43 +7,43 @@
 #include <SDL.h>
 
 typedef enum {
-    IMG_TYPE_TARGA,
-    IMG_TYPE_BMP,
-    IMG_TYPE_PNG,
-    IMG_TYPE_JPEG,
-    IMG_TYPE_RAW,
+	IMG_TYPE_TARGA,
+	IMG_TYPE_BMP,
+	IMG_TYPE_PNG,
+	IMG_TYPE_JPEG,
+	IMG_TYPE_RAW,
 } imgtype_t;
 
 typedef enum {
-    BGR24,
-    RGB24,
-    RGBA32,
-    BGRA32,
-    ARGB32,
+	BGR24,
+	RGB24,
+	RGBA32,
+	BGRA32,
+	ARGB32,
 } pix_fmt_t;
 
 typedef struct sprite_s {
-    u8* data;
-    imgtype_t type;
-    SDL_Surface* surface;
-    SDL_Texture* texture;
-    i32 scaling;
-    bool has_alpha;
+	u8* data;
+	imgtype_t type;
+	SDL_Surface* surface;
+	SDL_Texture* texture;
+	i32 scaling;
+	bool has_alpha;
 } sprite_t;
 
 #define MAX_SPRITE_SHEET_FRAMES 32
 
 typedef struct ss_frame_s {
-    SDL_Rect bounds;
-    f32 duration;
+	SDL_Rect bounds;
+	f32 duration;
 } ss_frame_t;
 
 typedef struct sprite_sheet_s {
-    i32 width;
-    i32 height;
-    sprite_t* backing_sprite;
-    size_t num_frames;
-    ss_frame_t* frames;
+	i32 width;
+	i32 height;
+	sprite_t* backing_sprite;
+	size_t num_frames;
+	ss_frame_t* frames;
 } sprite_sheet_t;
 
 bool sprite_load(const char* path, sprite_t** out);

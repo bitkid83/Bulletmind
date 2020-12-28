@@ -1,4 +1,6 @@
 {
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
     "files.associations": {
         "iosfwd": "c",
         "string.h": "c",

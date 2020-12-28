@@ -15,34 +15,34 @@ typedef struct SDL_Texture SDL_Texture;
 typedef struct game_resource_s game_resource_t;
 
 typedef enum {
-    ES_STARTUP,
-    ES_PLAY,
-    ES_QUIT,
+	ES_STARTUP,
+	ES_PLAY,
+	ES_QUIT,
 } engine_state_t;
 
 typedef struct engine_s {
-    i32 adapter_index;
+	i32 adapter_index;
 
-    SDL_Window* window;
-    SDL_Renderer* renderer;
-    // SDL_Surface* scr_surface;
-    // SDL_Texture* scr_texture;
+	SDL_Window* window;
+	SDL_Renderer* renderer;
+	// SDL_Surface* scr_surface;
+	// SDL_Texture* scr_texture;
 
-    i32 wnd_width, wnd_height;
-    i32 scr_width, scr_height;
-    f32 scr_scale_x, scr_scale_y;
-    rect_t scr_bounds;
-    vec2f_t mouse_pos;
+	i32 wnd_width, wnd_height;
+	i32 scr_width, scr_height;
+	f32 scr_scale_x, scr_scale_y;
+	rect_t scr_bounds;
+	vec2f_t mouse_pos;
 
-    f32 target_fps;
-    f64 target_frametime;
-    i32 frame_count;
+	f32 target_fps;
+	f64 target_frametime;
+	i32 frame_count;
 
-    engine_state_t state;
-    bool debug;
+	engine_state_t state;
+	bool debug;
 
-    entity_t* ent_list;
-    game_resource_t** game_resources;
+	entity_t* ent_list;
+	game_resource_t** game_resources;
 } engine_t;
 
 extern engine_t* engine;

@@ -6,8 +6,8 @@
 
 // generic data buffer
 typedef struct buffer_s {
-    u8 *data;
-    size_t size;
+	u8* data;
+	size_t size;
 } buffer_t;
 
 buffer_t* buffer_new(size_t size);
