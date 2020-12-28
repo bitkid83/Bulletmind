@@ -14,6 +14,16 @@ mkdir %BUILD_OUT_PATH%\assets
 mkdir %BUILD_OUT_PATH%\config
 ECHO.
 
+ECHO Building platform library x86 in %BUILD_OUT_PATH%...
+clang --std=c11 -g -O0 -Wall -m32 ^
+-D BM_WINDOWS ^
+-D BM_DEBUG ^
+-c .\src\platform\platform-win32.c ^
+-I.\src ^
+-o %BUILD_OUT_PATH%\platform.o
+
+llvm-ar -crv %BUILD_OUT_PATH%\platform.lib %BUILD_OUT_PATH%\platform.o
+
 ECHO Building Bulletmind x86 in %BUILD_OUT_PATH%...
 clang --std=c11 -g -O0 -Wall -m32 ^
 -D BM_WINDOWS ^
@@ -28,7 +38,6 @@ clang --std=c11 -g -O0 -Wall -m32 ^
 .\src\render.c ^
 .\src\resource.c ^
 .\src\engine.c ^
-.\src\performance.c ^
 .\src\toml_config.c ^
 .\src\main.c ^
 .\src\memalign.c ^
@@ -36,6 +45,7 @@ clang --std=c11 -g -O0 -Wall -m32 ^
 .\deps\tomlc99\toml.c ^
 -I.\src -I.\deps\tomlc99 -I.\deps\SDL2\include ^
 -L.\deps\SDL2\lib\x86 ^
+-l%BUILD_OUT_PATH%\platform ^
 -lkernel32 -lSDL2main -lSDL2 ^
 -Xlinker /SUBSYSTEM:console ^
 -o %BUILD_OUT_PATH%\bmind.exe

@@ -5,8 +5,10 @@
 #include "memarena.h"
 #include "resource.h"
 #include "engine.h"
-#include "performance.h"
 #include "utils.h"
+
+#include "platform/platform.h"
+#include "time/time_convert.h"
 
 #include <SDL.h>
 
@@ -17,11 +19,11 @@ engine_t* engine = NULL;
 static f64 engine_start_time;
 
 void eng_init_timing(void) {
-    engine_start_time = perf_seconds();
+    engine_start_time = os_get_time_sec();
 }
 
 f64 eng_get_time(void) {
-    return perf_seconds() - engine_start_time;
+    return os_get_time_sec() - engine_start_time;
 }
 
 game_resource_t* eng_get_resource(engine_t* eng, const char* name) {
@@ -37,7 +39,7 @@ game_resource_t* eng_get_resource(engine_t* eng, const char* name) {
 }
 
 bool eng_init(const char* name, i32 version, engine_t* eng) {
-    f64 init_start = perf_seconds();
+    u64 init_start = os_get_time_ns();
 
     eng->frame_count = 0;
 
@@ -102,7 +104,8 @@ bool eng_init(const char* name, i32 version, engine_t* eng) {
     eng->target_frametime = TARGET_FRAMETIME(eng->target_fps);
     eng->state = ES_STARTUP;
 
-    printf("eng_init OK [%fms]\n", (perf_seconds() - init_start) * 1000.0);
+    f64 init_end_msec = nsec_to_msec_f64(os_get_time_ns() - init_start);
+    printf("eng_init OK [%fms]\n", init_end_msec);
 
     return true;
 }

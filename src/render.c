@@ -1,7 +1,9 @@
-#include "performance.h"
 #include "render.h"
 #include "sprite.h"
 #include "vector.h"
+
+#include "platform/platform.h"
+#include "time/time_convert.h"
 
 void draw_rect_solid(SDL_Renderer* rend, i32 x, i32 y, i32 w, i32 h, rgba_t rgba)
 {
@@ -54,8 +56,8 @@ void draw_sprite_sheet(SDL_Renderer* rend, sprite_sheet_t* sprite_sheet, rect_t*
         sprite_flip
     );
 
-    if (frame_delay > 0.0 && perf_seconds() >= frame_time) {
-        frame_time = perf_seconds() + frame_delay;
+    if (frame_delay > 0.0 && os_get_time_sec() >= frame_time) {
+        frame_time = os_get_time_sec() + frame_delay;
         frame_num += 1;
     }
     if (frame_num > sprite_sheet->num_frames-1)

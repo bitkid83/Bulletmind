@@ -26,9 +26,11 @@ v0.1.122220a
 #include "input.h"
 #include "memarena.h"
 #include "engine.h"
-#include "performance.h"
 #include "utils.h"
 #include "vector.h"
+
+#include "platform/platform.h"
+#include "time/time_convert.h"
 
 #include <SDL.h>
 
@@ -76,7 +78,7 @@ int main(int argc, char** argv) {
     // main loop
     f64 dt = 0.0;
     while(engine->state != ES_QUIT) {
-        f64 frame_start = perf_seconds();
+        u64 frame_start_ns = os_get_time_ns();
 
         switch(engine->state) {
             case ES_STARTUP:
@@ -99,7 +101,7 @@ int main(int argc, char** argv) {
         }
 
         do {
-            dt = perf_seconds() - frame_start;
+            dt = nsec_to_sec_f64(os_get_time_ns() - frame_start_ns);
             if (dt > TARGET_FRAMETIME(5)) { dt = TARGET_FRAMETIME(5); }
         } while (dt < engine->target_frametime);
         //printf("%f\n", dt);

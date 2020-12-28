@@ -1,33 +1,11 @@
-#pragma once
-
 #include <Windows.h>
 
 #include "platform/platform.h"
-
-#ifndef MAX_PATH
-#define MAX_PATH 256
-#endif
-
-struct win_version_info {
-	i32 major;
-	i32 minor;
-	i32 build;
-	i32 revision;
-};
+// #include "platform/win-version.h"
+#include "time/time_convert.h"
 
 static LARGE_INTEGER clock_freq;
 static bool clock_initialized = false;
-static u32 g_win_ver;
-
-static inline u32 get_win_ver(void)
-{
-    if (g_win_ver == 0) {
-        struct win_version_info win_ver;
-        get_win_ver(&win_ver);
-        g_win_ver = (win_ver.major << 8) | win_ver.minor;
-    }
-    return g_win_ver;
-}
 
 static inline u64 get_clock_freq(void)
 {
@@ -41,8 +19,8 @@ static inline u64 get_clock_freq(void)
 void os_sleep_ms(const u32 duration)
 {
     u32 d = duration;
-    if (get_win_ver() >= 0x0602 & duration > 0)
-        d--;
+    // if (get_win_ver() >= 0x0602 & duration > 0)
+    //     d--;
     Sleep(d);
 }
 
@@ -57,4 +35,14 @@ u64 os_get_time_ns(void)
 	time_val /= (f64)get_clock_freq();
 
 	return (u64)time_val;
+}
+
+f64 os_get_time_sec(void)
+{
+    return nsec_to_sec_f64(os_get_time_ns());
+}
+
+f64 os_get_time_msec(void)
+{
+    return nsec_to_msec_f64(os_get_time_ns());
 }

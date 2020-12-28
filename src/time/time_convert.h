@@ -2,17 +2,22 @@
 
 #include "types.h"
 
-static inline f32 nsec_to_sec(const u64 nanos)
+static inline f64 nsec_to_sec_f64(const u64 nanos)
 {
-    return (f32)((f32)(nanos) / (f32)(1e-9));
+    return (f64)((f64)nanos / (f64)1000000000ULL);
 }
 
-static inline f32 nsec_to_msec(const u64 nanos)
+static inline f64 nsec_to_msec_f64(const u64 nanos)
 {
-    return (f32)((f32)(nanos) / (f32)(1e+6));
+    return (f64)((f64)nanos / (f64)1000000);
 }
 
-static inline f32 nsec_to_usec(const u64 nanos)
+static inline f64 nsec_to_usec_f64(const u64 nanos)
 {
-    return (f32)(nanos / 1000);
+    return (f64)((f64)nanos / (f64)1000);
+}
+
+static inline u32 nsec_to_msec_u32(const u64 nanos)
+{
+    return (u32)(nanos / 1000000);
 }
