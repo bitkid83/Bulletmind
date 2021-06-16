@@ -1,5 +1,20 @@
-#ifndef _H_ENTITY
-#define _H_ENTITY
+/*
+ * Copyright (c) 2019-2021 Paul Hindt
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+#pragma once
 
 #include "bitfield.h"
 #include "c99defs.h"
@@ -17,14 +32,14 @@ typedef struct engine_s engine_t;
 #define ENT_NAME_MAX 4096
 
 typedef enum {
-	MOVER = 1,
-	SHOOTER = 2,
-	DESTROYABLE = 3,
-	COLLIDER = 4,
-	SATELLITE = 5,
-	BULLET = 6,
-	PLAYER = 7,
-	RENDERABLE = 8,
+	kEntityMover = 1,
+	kEntityShooter = 2,
+	kEntityDestroyable = 3,
+	kEntityCollider = 4,
+	kEntitySatellite = 5,
+	kEntityBullet = 6,
+	kEntityPlayer = 7,
+	kEntityRenderable = 8,
 } entity_caps_t;
 
 typedef struct entity_s {
@@ -44,41 +59,42 @@ typedef struct entity_s {
 	f64 lifetime;
 } entity_t;
 
-extern i32 active_ents;
-extern i32 last_entity;
+extern i32 gActiveEntities;
+extern i32 gLastEntity;
 
-bool ent_init(entity_t** ent_list, const i32 num_ents);
-void ent_refresh(engine_t* eng, const f64 dt);
-void ent_shutdown(entity_t* ent_list);
+bool ent_init(entity_t **ent_list, const i32 num_ents);
+void ent_refresh(engine_t *eng, const f64 dt);
+void ent_shutdown(entity_t *ent_list);
 
-entity_t* ent_new(entity_t* ent_list);
-entity_t* ent_by_name(entity_t* ent_list, const char* name);
-entity_t* ent_by_index(entity_t* ent_list, const i32 idx);
+entity_t *ent_new(entity_t *ent_list);
+entity_t *ent_by_name(entity_t *ent_list, const char *name);
+entity_t *ent_by_index(entity_t *ent_list, const i32 idx);
 
-entity_t* ent_spawn(entity_t* ent_list, const char* name, const vec2f_t org, const vec2i_t size,
-		    const rgba_t* color, const i32 caps, const f64 lifetime);
-void ent_lifetime_update(entity_t* e);
-void ent_bbox_update(entity_t* e);
+entity_t *ent_spawn(entity_t *ent_list, const char *name, const vec2f_t org,
+		    const vec2i_t size, const rgba_t *color, const i32 caps,
+		    const f64 lifetime);
+void ent_lifetime_update(entity_t *e);
+void ent_bbox_update(entity_t *e);
 
-void ent_set_name(entity_t* e, const char* name);
+void ent_set_name(entity_t *e, const char *name);
 
-void ent_add_caps(entity_t* e, const entity_caps_t caps);
-void ent_remove_caps(entity_t* e, const entity_caps_t caps);
-void ent_set_caps(entity_t* e, const i32 cap_flags);
-bool ent_has_caps(entity_t* e, const entity_caps_t caps);
-bool ent_has_no_caps(entity_t* e);
+void ent_add_caps(entity_t *e, const entity_caps_t caps);
+void ent_remove_caps(entity_t *e, const entity_caps_t caps);
+void ent_set_caps(entity_t *e, const i32 cap_flags);
+bool ent_has_caps(entity_t *e, const entity_caps_t caps);
+bool ent_has_no_caps(entity_t *e);
 
-void ent_set_pos(entity_t* e, const vec2f_t org);
-void ent_set_vel(entity_t* e, const vec2f_t vel, f32 ang);
-void ent_set_bbox(entity_t* e, const rect_t* bbox);
-void ent_set_mouse_org(entity_t* e, const vec2f_t m_org);
-void ent_euler_move(entity_t* e, const vec2f_t accel, const f32 friction, const f64 dt);
+void ent_set_pos(entity_t *e, const vec2f_t org);
+void ent_set_vel(entity_t *e, const vec2f_t vel, f32 ang);
+void ent_set_bbox(entity_t *e, const rect_t *bbox);
+void ent_set_mouse_org(entity_t *e, const vec2f_t m_org);
+void ent_euler_move(entity_t *e, const vec2f_t accel, const f32 friction,
+		    const f64 dt);
 
-bool ent_spawn_player_and_satellite(entity_t* ent_list);
-void ent_move_player(entity_t* player, engine_t* engine, const f64 dt);
+bool ent_spawn_player_and_satellite(entity_t *ent_list);
+void ent_move_player(entity_t *player, engine_t *eng, const f64 dt);
 
-void ent_move_satellite(entity_t* satellite, entity_t* player, engine_t* engine, const f64 dt);
+void ent_move_satellite(entity_t *satellite, entity_t *player, engine_t *eng,
+			const f64 dt);
 
-void ent_move_bullet(entity_t* bullet, engine_t* engine, const f64 dt);
-
-#endif
+void ent_move_bullet(entity_t *bullet, engine_t *eng, const f64 dt);

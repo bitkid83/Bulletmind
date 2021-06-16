@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2013 Hugh Bailey <obs.jim@gmail.com>
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
 #include <Windows.h>
 
 #include "platform/platform.h"
@@ -45,4 +61,21 @@ f64 os_get_time_sec(void)
 f64 os_get_time_msec(void)
 {
 	return nsec_to_msec_f64(os_get_time_ns());
+}
+
+bool os_file_exists(const char* path)
+{
+	WIN32_FIND_DATAW wfd;
+	HANDLE hFind;
+	wchar_t *path_utf16;
+
+	if (!os_utf8_to_wcs_ptr(path, 0, &path_utf16))
+		return false;
+
+	hFind = FindFirstFileW(path_utf16, &wfd);
+	if (hFind != INVALID_HANDLE_VALUE)
+		FindClose(hFind);
+
+	free(path_utf16);
+	return hFind != INVALID_HANDLE_VALUE;
 }

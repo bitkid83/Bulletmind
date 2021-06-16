@@ -1,43 +1,49 @@
-#ifndef _H_COMMAND
-#define _H_COMMAND
+/*
+ * Copyright (c) 2019-2021 Paul Hindt
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+#pragma once
 
 #include "c99defs.h"
 #include "types.h"
 #include "engine.h"
 
-u32* array_cmds; // this doesn't need to be a pointer
+typedef struct input_state_s input_state_t;
+
+typedef enum {
+	kCommandNone = -1,
+	kCommandFirst = 0,
+	kCommandPlayerUp = kCommandFirst,
+	kCommandPlayerDown = 1,
+	kCommandPlayerLeft = 2,
+	kCommandPlayerRight = 3,
+	kCommandPlayerSpeed = 4,
+	kCommandPlayerPrimaryFire = 5,
+	kCommandPlayerAltFire = 6,
+	kCommandSetFpsHigh = 7,
+	kCommandSetFpsLow = 8,
+	kCommandQuit = 9,
+	kCommandDebugMode = 10,
+	kCommandMax = 11
+} command_t;
+
+// bool kActiveCommands[kCommandMax];
 
 void cmd_init(void);
-bool cmd_getstate(u32 cmd);
-void cmd_toggle_bool(u32 cmd, bool* value);
-void cmd_refresh(engine_t* engine);
+bool cmd_get_state(input_state_t *inputs, const command_t cmd);
+void cmd_toggle_bool(input_state_t *inputs, const command_t cmd, bool *value);
+void cmd_refresh(engine_t *engine);
 void cmd_shutdown(void);
-
-#define COMMAND_VALS                                                  \
-	CMD(CMD_PLAYER_UP, 0x01, "Player Move Up")                    \
-	CMD(CMD_PLAYER_DOWN, 0x02, "Player Move Down")                \
-	CMD(CMD_PLAYER_LEFT, 0x04, "Player Move Left")                \
-	CMD(CMD_PLAYER_RIGHT, 0x08, "Player Move Right")              \
-	CMD(CMD_PLAYER_SPEED, 0x10, "Player Speedup")                 \
-	CMD(CMD_PLAYER_PRIMARY_FIRE, 0x20, "Player Primary Fire")     \
-	CMD(CMD_PLAYER_ALTERNATE_FIRE, 0x40, "Player Alternate Fire") \
-	CMD(CMD_SET_FPS_60, 0x80, "Set FPS 60")                       \
-	CMD(CMD_SET_FPS_10, 0x100, "Set FPS 10")                      \
-	CMD(CMD_QUIT, 0x200, "Quit Game")                             \
-	CMD(CMD_SET_DEBUG, 0x400, "Set Debug Mode")
-
-#define CMD(c1, c2, c3) c1 = c2,
-enum { COMMAND_VALS };
-#undef CMD
-
-#define CMD(c1, c2, c3) c1,
-static const u32 COMMAND_LIST[] = {COMMAND_VALS};
-#undef CMD
-
-#define CMD(c1, c2, c3) c3,
-static const char* COMMAND_NAMES[] = {COMMAND_VALS};
-#undef CMD
-
-static volatile const u32 COMMAND_COUNT = sizeof(COMMAND_LIST);
-
-#endif
+const char *cmd_get_name(const command_t cmd);

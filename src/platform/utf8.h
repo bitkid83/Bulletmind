@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2019-2021 Paul Hindt
+ * Copyright (c) 2007 Alexey Vatchenko <av@bsdua.org>
  *
- * Permission to use, copy, modify, and distribute this software for any
+ * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  *
@@ -16,10 +16,22 @@
 
 #pragma once
 
-#include "c99defs.h"
-#include "types.h"
+/*
+ * utf8: implementation of UTF-8 charset encoding (RFC3629).
+ */
 
-bool is_power_of_two(uintptr_t x);
-uintptr_t align_forward(uintptr_t ptr, size_t align);
-void *aligned_malloc(size_t size, size_t alignment);
-void aligned_free(void *ptr);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define UTF8_IGNORE_ERROR 0x01
+#define UTF8_SKIP_BOM 0x02
+
+size_t utf8_to_wchar(const char *in, size_t insize, wchar_t *out,
+		     size_t outsize, int flags);
+size_t wchar_to_utf8(const wchar_t *in, size_t insize, char *out,
+		     size_t outsize, int flags);
+
+#ifdef __cplusplus
+}
+#endif

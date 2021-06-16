@@ -1,10 +1,22 @@
 /*
+ * Copyright (c) 2019-2021 Paul Hindt
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
 
-bulletmind
-(c) 2019-2020 Paul Hindt
-v0.1.122220a
-
-*/
+// bulletmind
+// (c) 2019-2021 Paul Hindt
+// v0.03012021-alpha
 
 #if defined(BM_WINDOWS)
 #ifndef _CRT_SECURE_NO_WARNINGS
@@ -16,6 +28,7 @@ v0.1.122220a
 #define APP_VER_MAJ 1
 #define APP_VER_MIN 0
 #define APP_VER_REV 0
+#define APP_VER_KIND "dev"
 
 #include "main.h"
 #include "buffer.h"
@@ -26,6 +39,7 @@ v0.1.122220a
 #include "input.h"
 #include "memarena.h"
 #include "engine.h"
+#include "resource.h"
 #include "utils.h"
 #include "vector.h"
 
@@ -34,33 +48,92 @@ v0.1.122220a
 
 #include <SDL.h>
 
-void print_debug_info(engine_t* engine, f64 dt)
+#define WORLD_TILES_WIDTH 64
+#define WORLD_TILES_HEIGHT 64
+#define TILE_WIDTH 16
+#define TILE_HEIGHT 16
+static u8 *world_map = NULL;
+
+void generate_tilemap()
 {
-	if (engine) {
-		entity_t* player_ent = ent_by_name(engine->ent_list, "player");
-		char time_buf[TEMP_STRING_MAX];
-		_strtime(time_buf);
-		font_print(engine, 10, 10, 1.5, "Time: %s", time_buf);
-		font_print(engine, 10, 30, 1.5, "Engine Time: %f", eng_get_time());
-		font_print(engine, 10, 50, 1.5, "Frame Time: %f", dt);
-		font_print(engine, 10, 70, 1.5, "Frame Count: %d", engine->frame_count);
-		font_print(engine, 10, 90, 1.5, "Active Ents: %d", active_ents);
-		font_print(engine, 10, 110, 1.5, "Mouse X,Y (%.2f, %.2f)", engine->mouse_pos.x,
-			   engine->mouse_pos.y);
-		font_print(engine, 10, 130, 1.5, "Player Origin (%.2f, %.2f)", player_ent->org.x,
-			   player_ent->org.y);
-		font_print(engine, 10, 150, 1.5, "Player Velocity (%.2f, %.2f)", player_ent->vel.x,
-			   player_ent->vel.y);
+	world_map = (u8*)malloc(WORLD_TILES_WIDTH * WORLD_TILES_HEIGHT);
+	for (size_t i = 0; i < WORLD_TILES_WIDTH * WORLD_TILES_HEIGHT; i++) {
+		world_map[i] = rand() % 3;
 	}
 }
 
-int main(int argc, char** argv)
+sprite_t* world_map_tile_index(engine_t* engine, i32 x, i32 y, i32 cam_x, i32 cam_y)
+{
+	i32 index = x + (y * TILE_WIDTH);
+	sprite_t* tile = NULL;
+	switch (world_map[index]) {
+	case 0:
+		game_resource_t *resource = eng_get_resource(engine, "tiled_wall_16x16");
+		tile = (sprite_t *)resource->data;
+		break;
+	case 1:
+		game_resource_t *resource = eng_get_resource(engine, "tiled_wall_16x16");
+		tile = (sprite_t *)resource->data;
+		break;
+	case 2:
+		game_resource_t *resource = eng_get_resource(engine, "tiled_wall_16x16");
+		tile = (sprite_t *)resource->data;
+		break;
+	}
+
+	tile->surface->clip_rect.x = x * TILE_WIDTH - cam_x;
+	tile->surface->clip_rect.y = y * TILE_HEIGHT - cam_y;
+
+	return tile;
+}
+
+void update_tilemap(engine_t* engine, i32 cam_x, i32 cam_y)
+{
+	for (i32 y = 0; y < WORLD_TILES_HEIGHT; y++) {
+		for (i32 x = 0; x < WORLD_TILES_WIDTH; x++) {
+			sprite_t* tile = world_map_tile_index(engine, x, y, cam_x, cam_y);
+		}
+	}
+}
+
+void print_debug_info(engine_t *engine, f64 dt)
+{
+	if (engine) {
+		entity_t *player_ent = ent_by_name(engine->ent_list, "player");
+		char time_buf[TEMP_STRING_MAX];
+		_strtime(time_buf);
+		font_print(engine, 10, 10, 1.5, "Time: %s", time_buf);
+		font_print(engine, 10, 30, 1.5, "Engine Time: %f",
+			   eng_get_time());
+		font_print(engine, 10, 50, 1.5, "Frame Time: %f", dt);
+		font_print(engine, 10, 70, 1.5, "Frame Count: %d",
+			   engine->frame_count);
+		font_print(engine, 10, 90, 1.5, "Active Ents: %d",
+			   gActiveEntities);
+		font_print(engine, 10, 110, 1.5, "Mouse X,Y (%d, %d)",
+			   engine->inputs->mouse.window_pos.x,
+			   engine->inputs->mouse.window_pos.y);
+		font_print(engine, 10, 130, 1.5, "Player Origin (%.2f, %.2f)",
+			   player_ent->org.x, player_ent->org.y);
+		font_print(engine, 10, 150, 1.5, "Player Velocity (%.2f, %.2f)",
+			   player_ent->vel.x, player_ent->vel.y);
+		font_print(engine, 10, 170, 1.5,
+			   "Left Stick (%d, %d) | Right Stick (%d, %d}",
+			   engine->inputs->gamepads[0].axes[0].value,
+			   engine->inputs->gamepads[0].axes[1].value,
+			   engine->inputs->gamepads[0].axes[2].value,
+			   engine->inputs->gamepads[0].axes[3].value);
+	}
+}
+
+int main(int argc, char **argv)
 {
 	// Allocate memory arena - 8MiB
-	arena_init(&mem_arena, arena_buf, ARENA_TOTAL_BYTES);
+	arena_init(&g_mem_arena, arena_buf, ARENA_TOTAL_BYTES);
 
 	size_t sz_engine = sizeof(engine_t);
-	engine = (engine_t*)arena_alloc(&mem_arena, sz_engine, DEFAULT_ALIGNMENT);
+	engine = (engine_t *)arena_alloc(&g_mem_arena, sz_engine,
+					 DEFAULT_ALIGNMENT);
 	engine->adapter_index = -1; // SDL default to first available
 	engine->wnd_width = WINDOW_WIDTH;
 	engine->wnd_height = WINDOW_HEIGHT;
@@ -74,7 +147,8 @@ int main(int argc, char** argv)
 #else
 	engine->debug = false;
 #endif
-	const u32 app_version = pack_version(APP_VER_MAJ, APP_VER_MIN, APP_VER_REV);
+	const u32 app_version =
+		pack_version(APP_VER_MAJ, APP_VER_MIN, APP_VER_REV);
 	if (!eng_init(APP_NAME, app_version, engine)) {
 		printf("Something went wrong!\n");
 		return -1;
@@ -82,16 +156,17 @@ int main(int argc, char** argv)
 
 	// main loop
 	f64 dt = 0.0;
-	while (engine->state != ES_QUIT) {
+	while (engine->state != kEngineStateQuit) {
 		u64 frame_start_ns = os_get_time_ns();
 
 		switch (engine->state) {
-		case ES_STARTUP:
+		case kEngineStateStartup:
 			ent_spawn_player_and_satellite(engine->ent_list);
-			engine->state = ES_PLAY;
+			engine->state = kEngineStatePlay;
 			break;
-		case ES_PLAY:
-			SDL_SetRenderDrawColor(engine->renderer, 0x20, 0x20, 0x20, 0xFF);
+		case kEngineStatePlay:
+			SDL_SetRenderDrawColor(engine->renderer, 0x20, 0x20,
+					       0x20, 0xFF);
 			SDL_RenderClear(engine->renderer);
 
 			if (engine->debug)
@@ -101,7 +176,7 @@ int main(int argc, char** argv)
 			cmd_refresh(engine);
 			ent_refresh(engine, dt);
 			break;
-		case ES_QUIT:
+		case kEngineStateQuit:
 			break;
 		}
 
